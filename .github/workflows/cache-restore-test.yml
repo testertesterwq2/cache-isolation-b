@@ -1,0 +1,19 @@
+name: cache-restore-test
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - id: c
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/payload
+          key: shared-cache-key-A
+      - name: result
+        run: |
+          echo "CACHE_HIT=[${{ steps.c.outputs.cache-hit }}]"
+          if [ -f /tmp/payload/secret.txt ]; then echo "LEAKED=[$(cat /tmp/payload/secret.txt)]"; else echo "NO-CACHE-CONTENT"; fi
